@@ -292,6 +292,7 @@ resource "google_compute_global_address" "peering_address" {
   address_type  = "INTERNAL"
   prefix_length = 16
   network       = "default"
+  address     = "10.50.0.0"
 }
 
 resource "google_service_networking_connection" "peering_connection" {
@@ -347,7 +348,7 @@ resource "google_vpc_access_connector" "disearch_vpc_connector" {
 
 resource "google_compute_subnetwork" "uscentral_disearch_vpc01_subnet1000024" {
   name          = var.subnet_name
-  ip_cidr_range = "10.0.0.0/24"
+  ip_cidr_range = "10.2.0.0/24"
   network       = "default"
   region        = var.region
   private_ip_google_access = true
@@ -356,7 +357,7 @@ resource "google_compute_subnetwork" "uscentral_disearch_vpc01_subnet1000024" {
 
 resource "google_compute_subnetwork" "uscentral_disearch_vpc01_subnet1010016_gke" {
   name          = var.gke_subnet_name
-  ip_cidr_range = "10.1.0.0/16"
+  ip_cidr_range = "10.3.0.0/16"
   network       = "default"
   region        = var.region
   private_ip_google_access = true
@@ -612,7 +613,7 @@ resource "google_container_cluster" "disearch_cluster" {
 
   master_authorized_networks_config {
     cidr_blocks {
-      cidr_block = "10.1.0.0/16"
+      cidr_block = "10.3.0.0/16"
     }
     cidr_blocks {
       cidr_block = "111.88.136.0/24"
