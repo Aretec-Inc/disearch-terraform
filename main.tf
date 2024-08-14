@@ -728,24 +728,6 @@ resource "time_sleep" "wait_90_seconds" {
 data "google_client_config" "default" { depends_on = [ time_sleep.wait_90_seconds, null_resource.global_delay ] }
 
 
-# data "template_file" "kubeconfig" {
-#   template = file("./kubeconfig.tpl")
-
-#   vars = {
-#     cluster_name           = var.gke_cluster_name
-#     cluster_endpoint       = "https://${google_container_cluster.disearch_cluster.endpoint}"
-#     cluster_ca_certificate = google_container_cluster.disearch_cluster.master_auth[0].cluster_ca_certificate
-#   }
-#   depends_on = [ data.google_client_config.default, null_resource.global_delay ]
-# }
-
-# resource "local_file" "kubeconfig" {
-#   content  = data.template_file.kubeconfig.rendered
-#   filename = "kubeconfig.yaml"
-#   depends_on = [ data.template_file.kubeconfig ]
-# }
-
-
 # Create secrets in Google Secret Manager
 
 resource "google_secret_manager_secret" "aretec_admin" {
