@@ -103,5 +103,17 @@ Step 6: Creating Infrastructure in GCP using Terraform
     terraform plan -var="projectName=YOUR_GCP_PROJECT_ID"
     terraform apply -var="projectName=YOUR_GCP_PROJECT_ID" -auto-approve
  
+Step 7: Workload Identity setup
 
+    gcloud container clusters get-credentials disearch-cluster --zone us-central1-c --project YOUR_GCP_PROJECT_ID
+
+    kubectl create serviceaccount gke-sa --namespace=default
+
+    gcloud iam service-accounts add-iam-policy-binding gke-sa@YOUR_GCP_PROJECT_ID.iam.gserviceaccount.com \
+    --role roles/iam.workloadIdentityUser \
+    --member "serviceAccount:$YOUR_GCP_PROJECT_ID.svc.id.goog[default/gke-sa]"
+    
+    kubectl annotate serviceaccount gke-sa \
+    --namespace default \
+    iam.gke.io/gcp-service-account=gke-sa@YOUR_GCP_PROJECT_ID.iam.gserviceaccount.com
     
