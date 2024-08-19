@@ -125,7 +125,7 @@ Step 9: Creating Postgres Connection String
 
     ENCODED_CONN_STRING=$(echo -n "postgresql://postgres:$(gcloud secrets versions access latest --secret=DB_PASSWORD)@$(gcloud secrets versions access latest --secret=DB_HOST)/postgres" | base64 -w 0)
 
-Use below command for Verificaiton
+Use below commands for Verificaiton
 
     echo $ENCODED_CONN_STRING
 
