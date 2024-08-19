@@ -296,8 +296,8 @@ Creating and listing pubsub topic
     gcloud pubsub topics create dead-letter-topic
     gcloud pubsub topics list
 
-Creating Sub    
-    echo "creating subscriptions"
+Creating Pubsub Subscriptions
+
     gcloud pubsub subscriptions create file-process-subscription \
         --topic=file-process-topic \
         --message-retention-duration=7d \
