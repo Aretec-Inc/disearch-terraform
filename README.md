@@ -349,3 +349,10 @@ Connecting the cluster
        echo -n "YOUR_WEBSITE_URL" | gcloud secrets versions add vertexai-referer --data-file=- --project=YOUR_GCP_PROJECT_ID
 
 Make sure to add the Website URL here.
+
+## Step 17: Replacing Values For Cors
+
+    sed -i "s|REPLACE_WITH_WEBSITE_URL|"YOUR_WEBSITE_URL"|g" cors.json
+    gsutil cors set cors.json gs://$BUCKET_NAME
+    gsutil cors get gs://$BUCKET_NAME
+
