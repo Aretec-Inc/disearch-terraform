@@ -172,3 +172,10 @@ Replace project id
     
     sed -i "s|REPLACE_WITH_PASSWORD|UmVkaXMxMjMkJV4uLg==|g" redis-values.yaml
     echo "Updated Redis password in redis-values.yaml."
+
+Appling Helm upgrade Commands
+
+    helm upgrade --install keda kedacore/keda --namespace keda --create-namespace
+    helm upgrade --install gke-templates aretec-public/gke-templates --values ./gke-values.yaml
+    helm upgrade --install redis aretec-public/redis --values ./redis-values.yaml
+    helm upgrade --install etcd aretec-public/etcd --values ./etcd-values.yaml
