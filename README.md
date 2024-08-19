@@ -1,4 +1,4 @@
-This guide provides instructions on how to setup a complete Project in GCP.
+This guide provides instructions on how to set up a complete project in GCP.
 
 ## Step 1: Authenticate with Google Cloud:
 Use the following command to authenticate your local environment with your Google Cloud account:
