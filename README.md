@@ -151,7 +151,7 @@ Decode the base64 encoded endpoint for verfication
 
     echo "Decoded INTERNAL_ENDPOINT: $(echo "$INTERNAL_ENDPOINT" | base64 --decode)"
 
-Replace project id
+Replace Values
     
     sed -i "s|REPLACE_WITH_PROJECT_ID|aretecinc-public|g" gke-values.yaml
     
@@ -179,3 +179,100 @@ Appling Helm upgrade Commands
     helm upgrade --install gke-templates aretec-public/gke-templates --values ./gke-values.yaml
     helm upgrade --install redis aretec-public/redis --values ./redis-values.yaml
     helm upgrade --install etcd aretec-public/etcd --values ./etcd-values.yaml
+
+## Step 12: Cloud Function Deployments
+
+    BUCKET_NAME=$(gcloud secrets versions access latest --secret="GCP_BUCKET") && echo "Bucket name: $BUCKET_NAME"
+
+Clone the GitHub repository
+
+ 
+Appling Policy
+    
+    GCS_SERVICE_ACCOUNT=$(gsutil kms serviceaccount -p "YOUR_GCP_PROJECT_NUMBER") && echo "GCS_SERVICE_ACCOUNT: $GCS_SERVICE_ACCOUNT"
+
+    gcloud projects add-iam-policy-binding "YOUR_GCP_PROJECT_ID" \
+      --member serviceAccount:$GCS_SERVICE_ACCOUNT \
+      --role roles/pubsub.publisher
+
+Cloud Functions
+
+Deploying Cloud Function uploader-trigger
+
+    echo "Deploying uploader-trigger"
+    cd uploader-trigger-cf
+    git checkout deployment
+    gcloud functions deploy uploader-trigger \
+      --runtime python39 \
+      --entry-point main_func \
+      --set-env-vars=LOG_EXECUTION_ID=true \
+      --set-secrets=bucket=projects/$PROJECT_ID/secrets/GCP_BUCKET:latest,project_id=projects/"YOUR_GCP_PROJECT_ID"/secrets/project_id:latest \
+      --service-account gke-sa@"YOUR_GCP_PROJECT_ID".iam.gserviceaccount.com \
+      --serve-all-traffic-latest-revision \
+      --vpc-connector disearch-vpc-connector \
+      --trigger-bucket $BUCKET_NAME \
+      --region us-central1 \
+      --gen2 \
+      --quiet
+    cd ..
+    
+Deploying Cloud Function document-status
+
+    echo "Deploying document-status"
+    cd document-status-cf
+    git checkout deployment
+    gcloud functions deploy document-status \
+      --runtime python39 \
+      --trigger-http \
+      --entry-point main_func \
+      --set-secrets 'DB_HOST=DB_HOST:latest,DB_USER=DB_USER:latest,DB_PASSWORD=DB_PASSWORD:latest' \
+      --service-account  gke-sa@"YOUR_GCP_PROJECT_ID".iam.gserviceaccount.com \
+      --serve-all-traffic-latest-revision \
+      --vpc-connector disearch-vpc-connector \
+      --region us-central1 \
+      --gen2 \
+      --quiet
+    cd ..
+
+Deploying Cloud Function image-processing
+
+    echo "Deploying image-processing"
+    cd image-process-cf
+    git checkout deployment
+    gcloud functions deploy image-processing \
+      --runtime python39 \
+      --entry-point main_func \
+      --service-account  gke-sa@"YOUR_GCP_PROJECT_ID".iam.gserviceaccount.com \
+      --set-env-vars=SCHEMA=disearch_search,LOG_EXECUTION_ID=true \
+      --set-secrets 'LOG_INDEX=LOG_INDEX:latest,LOGS_URL=LOGS_URL:latest,gpt_key=OPENAI_API_KEY:latest' \
+      --vpc-connector disearch-vpc-connector \
+      --serve-all-traffic-latest-revision \
+      --trigger-http \
+      --gen2 \
+      --region us-central1 \
+      --memory 2G
+    cd ..  
+
+Deploying Cloud Function Metadata Extractor
+    
+    echo "Deploying Metadata Extractor"
+    cd metadata-extractor-cf
+    git checkout deployment
+    gcloud functions deploy update_metadata_ingested_document \
+      --runtime python39 \
+      --trigger-http \
+      --entry-point main_func \
+      --set-env-vars=LOG_EXECUTION_ID=true \
+      --set-secrets=project_id=projects/$PROJECT_ID/secrets/project_id:latest \
+      --service-account gke-sa@"YOUR_GCP_PROJECT_ID".iam.gserviceaccount.com \
+      --vpc-connector disearch-vpc-connector --region us-central1 --serve-all-traffic-latest-revision --gen2 --memory 1G
+    cd ..
+
+Step 13: Fetching and updating Cloudfunction URL's in GCP Secrets
+
+    gcloud secrets versions add status_cloud_fn --data-file=<(echo -n "$(gcloud functions describe document-status --region=us-central1 --format="value(url)")") --project="YOUR_GCP_PROJECT_ID"
+
+    gcloud secrets versions add image_summary_cloud_fn --data-file=<(echo -n "$(gcloud functions describe image-processing --region=us-central1 --format="value(url)")") --project="YOUR_GCP_PROJECT_ID"
+        
+    gcloud secrets versions add metadata_cloud_fn --data-file=<(echo -n "$(gcloud functions describe update_metadata_ingested_document --region=us-central1 --format="value(url)")") --project="YOUR_GCP_PROJECT_ID"
+
