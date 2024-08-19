@@ -117,7 +117,7 @@ Step 7: Workload Identity setup
     --namespace default \
     iam.gke.io/gcp-service-account=gke-sa@YOUR_GCP_PROJECT_ID.iam.gserviceaccount.com
     
-Step 8: Fetch the private IP address of the Cloud SQL instance
+Step 8: Fetch and saving the private IP address of the Cloud SQL instance to GCP secrets
 
     gcloud secrets versions add DB_HOST --data-file=<(gcloud sql instances describe disearch-db --format="json(ipAddresses)" | jq -r '.ipAddresses[] | select(.type == "PRIVATE") | .ipAddress')
 
