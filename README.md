@@ -184,9 +184,18 @@ Appling Helm upgrade Commands
 
     BUCKET_NAME=$(gcloud secrets versions access latest --secret="GCP_BUCKET") && echo "Bucket name: $BUCKET_NAME"
 
-Clone the GitHub repository
+Clone the GitHub repository. 
 
- 
+Email at aareez.asif@aretecinc.com to get the authentication token for pulling the cloud functions from the repository.
+
+    git clone https://PASTE_AUTHENTICATION_TOKEN_HERE@github.com/Aretec-Inc/uploader-trigger-cf.git
+    git clone https://PASTE_AUTHENTICATION_TOKEN_HERE@github.com/Aretec-Inc/document-status-cf.git
+    git clone https://PASTE_AUTHENTICATION_TOKEN_HERE@github.com/Aretec-Inc/image-process-cf.git
+    git clone https://PASTE_AUTHENTICATION_TOKEN_HERE@github.com/Aretec-Inc/metadata-extractor-cf.git
+    git clone https://PASTE_AUTHENTICATION_TOKEN_HERE@github.com/Aretec-Inc/pdf-convert-cf.git
+
+Email at aareez.asif@aretecinc.com to get the authentication token for pulling the cloud functions from the repository.
+
 Appling Policy
     
     GCS_SERVICE_ACCOUNT=$(gsutil kms serviceaccount -p "YOUR_GCP_PROJECT_NUMBER") && echo "GCS_SERVICE_ACCOUNT: $GCS_SERVICE_ACCOUNT"
@@ -276,3 +285,42 @@ Step 13: Fetching and updating Cloudfunction URL's in GCP Secrets
         
     gcloud secrets versions add metadata_cloud_fn --data-file=<(echo -n "$(gcloud functions describe update_metadata_ingested_document --region=us-central1 --format="value(url)")") --project="YOUR_GCP_PROJECT_ID"
 
+Step 14: Creating Pubsub and subscriptions
+
+Creating and listing pubsub topic
+
+    gcloud pubsub topics create file-process-topic
+    gcloud pubsub topics create image-topic
+    gcloud pubsub topics create metadata-topic
+    gcloud pubsub topics create pdf-convert-topic
+    gcloud pubsub topics create dead-letter-topic
+    gcloud pubsub topics list
+
+Creating Sub    
+    echo "creating subscriptions"
+    gcloud pubsub subscriptions create file-process-subscription \
+        --topic=file-process-topic \
+        --message-retention-duration=7d \
+        --expiration-period=31d \
+        --ack-deadline=600
+    
+    
+    gcloud pubsub subscriptions create image-subscription \
+        --topic=image-topic \
+        --message-retention-duration=7d \
+        --expiration-period=31d \
+        --ack-deadline=600
+    
+    
+    gcloud pubsub subscriptions create metadata-subscription \
+        --topic=metadata-topic \
+        --message-retention-duration=7d \
+        --expiration-period=31d \
+        --ack-deadline=600
+    
+    
+    gcloud pubsub subscriptions create pdf-subscription \
+        --topic=pdf-convert-topic \
+        --message-retention-duration=7d \
+        --expiration-period=31d \
+        --ack-deadline=600
