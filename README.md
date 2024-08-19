@@ -1,5 +1,4 @@
-This guide provides instructions on how to run  in a Cloud Run job with the necessary environment variables and how to create and configure a service account with the required IAM role permissions.
-
+This guide provides instructions on how to setup a complete Project in GCP.
 
 ## Step 1: Authenticate with Google Cloud:
 Use the following command to authenticate your local environment with your Google Cloud account:
