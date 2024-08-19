@@ -343,3 +343,9 @@ Connecting the cluster
     kubectl get service vertexai-summary-service -o=jsonpath='http://{.status.loadBalancer.ingress[0].ip}' | gcloud secrets versions add vertexai-summary --data-file=-
     
     kubectl get service pdflb -o=jsonpath='http://{.status.loadBalancer.ingress[0].ip}' | gcloud secrets versions add pdf_loadbalancer --data-file=-
+
+## Step 16: Updating GCP Secret for Website URL
+
+       echo -n "YOUR_WEBSITE_URL" | gcloud secrets versions add vertexai-referer --data-file=- --project=YOUR_GCP_PROJECT_ID
+
+Make sure to add the Website URL here.
