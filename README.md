@@ -121,3 +121,12 @@ Step 8: Fetch and saving the private IP address of the Cloud SQL instance to GCP
 
     gcloud secrets versions add DB_HOST --data-file=<(gcloud sql instances describe disearch-db --format="json(ipAddresses)" | jq -r '.ipAddresses[] | select(.type == "PRIVATE") | .ipAddress')
 
+Step 9: Creating Postgres Connection String 
+
+    ENCODED_CONN_STRING=$(echo -n "postgresql://postgres:$(gcloud secrets versions access latest --secret=DB_PASSWORD)@$(gcloud secrets versions access latest --secret=DB_HOST)/postgres" | base64 -w 0)
+
+Use below command for Verificaiton
+
+    echo $ENCODED_CONN_STRING
+
+    echo "$ENCODED_CONN_STRING" | base64 --decode
