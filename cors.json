@@ -1,0 +1,1 @@
+[{"maxAgeSeconds": 3600, "method": ["GET", "POST", "PUT", "DELETE"], "origin": ["http://localhost:3000", "https://REPLACE_WITH_WEBSITE_URL"], "responseHeader": ["content-type"]}]
