@@ -1,4 +1,4 @@
-This guide provides instructions on how to run Deployer images in a Cloud Run job with the necessary environment variables and how to create and configure a service account with the required IAM role permissions.
+This guide provides instructions on how to run  in a Cloud Run job with the necessary environment variables and how to create and configure a service account with the required IAM role permissions.
 
 
 ## Step 1: Authenticate with Google Cloud:
@@ -112,21 +112,14 @@ After creating the secrets, you can add the actual values to them by adding secr
     echo -n "your-website-url.com" | gcloud secrets versions add WEBSITE_URL --data-file=-
     echo -n "$(cat ~/key-file.json)" | gcloud secrets versions add SERVICE_ACCOUNT_KEY --data-file=-
 
-## Step 6: Create and Execute Cloud Run Job
+## 
 
-      gcloud run jobs create deployer \
-        --image=gcr.io/aretecinc-public/disearch/deployer/deployer:1.0 \
-        --region=us-central1 \
-        --service-account=terraform@"YOUR_GCP_PROJECT_ID".iam.gserviceaccount.com \
-        --set-secrets=PROJECT_ID=PROJECT_ID:latest,PROJECT_NUMBER=PROJECT_NUMBER:latest,DEFAULT_OWNER_EMAIL=DEFAULT_OWNER_EMAIL:latest,WEBSITE_URL=WEBSITE_URL:latest,SERVICE_ACCOUNT_KEY=SERVICE_ACCOUNT_KEY:latest \
-        --memory=512Mi \
-        --cpu=1 \
-        --task-timeout=3h \
-        --max-retries=1 \
-        --parallelism=1
-  
+## Step 6: Creating Infrastructure in GCP using Terraform
 
-      gcloud run jobs execute deployer --region us-central1
+    terraform init
+    terraform plan -var="projectName=$PROJECT_ID"
+    terraform apply -var="projectName=$PROJECT_ID" -auto-approve
+ 
 
 
 By following these steps, you've successfully configured your environment and service account to run your Cloud      Run job. Ensure all environment variables are set before executing the job.
