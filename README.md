@@ -371,7 +371,7 @@ Make sure to add the Website URL here.
     
     
     gcloud run deploy disearch \
-    --image=gcr.io/aretecinc-public/disearch/disearch: \
+    --image=gcr.io/aretecinc-public/disearch/disearch:1.0.8 \
     --set-env-vars=ALLOWED_ORIGIN="YOUR_WEBSITE_URL" --set-env-vars=appName=disearch --set-env-vars=schema=disearch --set-env-vars=AUTH_EMAIL="YOUR_DEFAULT_OWNER_EMAIL" --set-env-vars=IS_PENSDOWN=false --set-env-vars=IS_CONTEXT=false \
     --set-cloudsql-instances="YOUR_GCP_PROJECT_ID":us-central1:disearch-db \
     --service-account=gke-sa@"YOUR_GCP_PROJECT_ID".iam.gserviceaccount.com \
@@ -379,3 +379,11 @@ Make sure to add the Website URL here.
     --no-cpu-boost \
     --region=us-central1 \
     --project="YOUR_GCP_PROJECT_ID"
+
+## Step 19: Domain Mapping
+    
+    gcloud beta run domain-mappings create --service disearch --domain "YOUR_WEBSITE_URL" --region us-central1
+
+Remember to add this CNAME record in cloud DNS
+    
+    ghs.googlehosted.com.
