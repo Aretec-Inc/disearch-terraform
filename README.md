@@ -330,7 +330,7 @@ Creating Pubsub Subscriptions
 
 Connecting the cluster
 
-    gcloud container clusters get-credentials disearch-cluster --zone us-central1-c --project YOUR_GCP_PROJECT_ID
+    gcloud container clusters get-credentials disearch-cluster --zone us-central1-c --project "YOUR_GCP_PROJECT_ID"
 
     kubectl get service doc-chat-service -o=jsonpath='http://{.status.loadBalancer.ingress[0].ip}' | gcloud secrets versions add DOCUMENT_CHAT_URL --data-file=-
     
@@ -356,3 +356,26 @@ Make sure to add the Website URL here.
     gsutil cors set cors.json gs://$BUCKET_NAME
     gsutil cors get gs://$BUCKET_NAME
 
+## Step 18: applying Cloud Run
+
+    gcloud run deploy file-upload-pubsub --image=gcr.io/aretecinc-public/disearch/file-upload-pubsub:1.0.8 --set-env-vars=batch_size=1,project_id="YOUR_GCP_PROJECT_ID"  --platform managed  --vpc-connector=projects/"YOUR_GCP_PROJECT_ID"/locations/us-central1/connectors/disearch-vpc-connector --set-secrets=vertexai_python_url=vertexai_python_url:latest,metadata_cloud_fn=metadata_cloud_fn:latest,image_summary_cloud_fn=image_summary_cloud_fn:latest,APP_VERSION=APP_VERSION:latest --region=us-central1 --project="YOUR_GCP_PROJECT_ID" --service-account=gke-sa@"YOUR_GCP_PROJECT_ID".iam.gserviceaccount.com --allow-unauthenticated --min-instances=1 --max-instances=2
+    
+    
+    gcloud run deploy image-pubsub --image=gcr.io/aretecinc-public/disearch/image-pubsub:1.0.8 --set-env-vars=image_subscription_id=image-subscription,project_id="YOUR_GCP_PROJECT_ID",batch_size=1,project_id="YOUR_GCP_PROJECT_ID"  --platform managed  --vpc-connector=projects/"YOUR_GCP_PROJECT_ID"/locations/us-central1/connectors/disearch-vpc-connector --set-secrets=vertexai_python_url=vertexai_python_url:latest,metadata_cloud_fn=metadata_cloud_fn:latest,image_summary_cloud_fn=image_summary_cloud_fn:latest,APP_VERSION=APP_VERSION:latest --region=us-central1 --project="YOUR_GCP_PROJECT_ID" --service-account=gke-sa@"YOUR_GCP_PROJECT_ID".iam.gserviceaccount.com --allow-unauthenticated --min-instances=1 --max-instances=2
+    
+  
+    gcloud run deploy metadata-pubsub --image=gcr.io/aretecinc-public/disearch/metadata-pubsub:1.0.8 --set-env-vars=project_id="YOUR_GCP_PROJECT_ID",batch_size=1 --platform managed  --vpc-connector=projects/"YOUR_GCP_PROJECT_ID"/locations/us-central1/connectors/disearch-vpc-connector --set-secrets=vertexai_python_url=vertexai_python_url:latest,metadata_cloud_fn=metadata_cloud_fn:latest,image_summary_cloud_fn=image_summary_cloud_fn:latest,APP_VERSION=APP_VERSION:latest --region=us-central1 --project="YOUR_GCP_PROJECT_ID" --service-account=gke-sa@"YOUR_GCP_PROJECT_ID".iam.gserviceaccount.com --allow-unauthenticated --min-instances=1 --max-instances=2
+    
+   
+    gcloud run deploy pdf-convert-pubsub --image=gcr.io/aretecinc-public/disearch/pdf-convert-pubsub:1.0.8 --set-env-vars=batch_size=1,project_id="YOUR_GCP_PROJECT_ID" --platform managed  --vpc-connector=projects/"YOUR_GCP_PROJECT_ID"/locations/us-central1/connectors/disearch-vpc-connector --set-secrets=pdf_loadbalancer=pdf_loadbalancer:latest,APP_VERSION=APP_VERSION:latest --region=us-central1 --project="YOUR_GCP_PROJECT_ID" --service-account=gke-sa@"YOUR_GCP_PROJECT_ID".iam.gserviceaccount.com --allow-unauthenticated --min-instances=1 --max-instances=2
+    
+    
+    gcloud run deploy disearch \
+    --image=gcr.io/aretecinc-public/disearch/disearch: \
+    --set-env-vars=ALLOWED_ORIGIN="YOUR_WEBSITE_URL" --set-env-vars=appName=disearch --set-env-vars=schema=disearch --set-env-vars=AUTH_EMAIL="YOUR_DEFAULT_OWNER_EMAIL" --set-env-vars=IS_PENSDOWN=false --set-env-vars=IS_CONTEXT=false \
+    --set-cloudsql-instances="YOUR_GCP_PROJECT_ID":us-central1:disearch-db \
+    --service-account=gke-sa@"YOUR_GCP_PROJECT_ID".iam.gserviceaccount.com \
+    --set-secrets=service_key=service_key:latest,DB_USER=DB_USER:latest,GCP_BUCKET=GCP_BUCKET:latest,DB_HOST=DB_HOST:latest,DB_PASSWORD=DB_PASSWORD:latest,DOCUMENT_CHAT_URL=DOCUMENT_CHAT_URL:latest,LOG_INDEX=LOG_INDEX:latest,project_id=project_id:latest,vertex_ai_search_summary_url=vertexai-summary:latest,vertex_ai_followup_url=vertexai_followup:latest,IS_VERTEX_AI=IS_VERTEXAI:latest,vertex_ai_search_base_url=vertexai_citation:latest,vertex_ai_init_base_url=vertexai_python_url:latest,APP_VERSION=APP_VERSION:latest \
+    --no-cpu-boost \
+    --region=us-central1 \
+    --project="YOUR_GCP_PROJECT_ID"
