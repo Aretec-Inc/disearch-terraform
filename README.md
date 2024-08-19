@@ -85,43 +85,24 @@ Assign the required IAM roles to the service account with the following command:
   
 Generate the service account key and save it to a JSON file:
     
-    gcloud iam service-accounts keys create ~/key-file.json \
+    gcloud iam service-accounts keys create ./secret.json \
     --iam-account=terraform@"YOUR_GCP_PROJECT_ID".iam.gserviceaccount.com
-
-The key file will be saved to ~/key-file.json. 
 
 After generating the new key, activate the service account using:
 
-    cd ~ && gcloud auth activate-service-account --key-file=key-file.json
+    gcloud auth activate-service-account --key-file=secret.json
 
-## Step 5: Creating Secrets in GCP Secret Manager
+Step 5: Create a Bucket for Storing the Terraform State File
 
-Use gcloud command for creating secrets in GCP Secret Manager
+    gcloud storage buckets create gs://NAME-OF-YOUR-GCP-BUCKET --location=us-central1
 
-    gcloud secrets create PROJECT_ID --replication-policy="automatic"
-    gcloud secrets create PROJECT_NUMBER --replication-policy="automatic"
-    gcloud secrets create DEFAULT_OWNER_EMAIL --replication-policy="automatic"
-    gcloud secrets create WEBSITE_URL --replication-policy="automatic"
-    gcloud secrets create SERVICE_ACCOUNT_KEY --replication-policy="automatic"
+Remember, the bucket name must be globally unique. After creating the bucket, replace the bucket name in the terraform backend section within the main.tf file.
 
-After creating the secrets, you can add the actual values to them by adding secret versions. 
-
-    echo -n "your-project-id" | gcloud secrets versions add PROJECT_ID --data-file=-
-    echo -n "your-project-number" | gcloud secrets versions add PROJECT_NUMBER --data-file=-
-    echo -n "your-owner-email@example.com" | gcloud secrets versions add DEFAULT_OWNER_EMAIL --data-file=-
-    echo -n "your-website-url.com" | gcloud secrets versions add WEBSITE_URL --data-file=-
-    echo -n "$(cat ~/key-file.json)" | gcloud secrets versions add SERVICE_ACCOUNT_KEY --data-file=-
-
-## 
-
-## Step 6: Creating Infrastructure in GCP using Terraform
+Step 6: Creating Infrastructure in GCP using Terraform
 
     terraform init
-    terraform plan -var="projectName=$PROJECT_ID"
-    terraform apply -var="projectName=$PROJECT_ID" -auto-approve
+    terraform plan -var="projectName=YOUR_GCP_PROJECT_ID"
+    terraform apply -var="projectName=YOUR_GCP_PROJECT_ID" -auto-approve
  
 
-
-By following these steps, you've successfully configured your environment and service account to run your Cloud      Run job. Ensure all environment variables are set before executing the job.
-    
     
