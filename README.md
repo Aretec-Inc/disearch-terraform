@@ -105,6 +105,8 @@ Remember, the bucket name must be globally unique. After creating the bucket, re
  
 ## Step 7: Workload Identity setup
 
+Connecting the cluster 
+
     gcloud container clusters get-credentials disearch-cluster --zone us-central1-c --project YOUR_GCP_PROJECT_ID
 
     kubectl create serviceaccount gke-sa --namespace=default
@@ -277,7 +279,7 @@ Deploying Cloud Function Metadata Extractor
       --vpc-connector disearch-vpc-connector --region us-central1 --serve-all-traffic-latest-revision --gen2 --memory 1G
     cd ..
 
-Step 13: Fetching and updating Cloudfunction URL's in GCP Secrets
+## Step 13: Fetching and updating Cloudfunction URL's in GCP Secrets
 
     gcloud secrets versions add status_cloud_fn --data-file=<(echo -n "$(gcloud functions describe document-status --region=us-central1 --format="value(url)")") --project="YOUR_GCP_PROJECT_ID"
 
@@ -285,7 +287,7 @@ Step 13: Fetching and updating Cloudfunction URL's in GCP Secrets
         
     gcloud secrets versions add metadata_cloud_fn --data-file=<(echo -n "$(gcloud functions describe update_metadata_ingested_document --region=us-central1 --format="value(url)")") --project="YOUR_GCP_PROJECT_ID"
 
-Step 14: Creating Pubsub and subscriptions
+## Step 14: Creating Pubsub and subscriptions
 
 Creating and listing pubsub topic
 
@@ -324,3 +326,20 @@ Creating Pubsub Subscriptions
         --message-retention-duration=7d \
         --expiration-period=31d \
         --ack-deadline=600
+## Step 15: Fetching and updating GKE variables in GCP secrets
+
+Connecting the cluster
+
+    gcloud container clusters get-credentials disearch-cluster --zone us-central1-c --project YOUR_GCP_PROJECT_ID
+
+    kubectl get service doc-chat-service -o=jsonpath='http://{.status.loadBalancer.ingress[0].ip}' | gcloud secrets versions add DOCUMENT_CHAT_URL --data-file=-
+    
+    kubectl get service vertex-ai-followup-service -o=jsonpath='http://{.status.loadBalancer.ingress[0].ip}' | gcloud secrets versions add vertexai_followup --data-file=-
+    
+    kubectl get service vertexai-citation-service -o=jsonpath='http://{.status.loadBalancer.ingress[0].ip}' | gcloud secrets versions add vertexai_citation --data-file=-
+    
+    kubectl get service vertexai-service -o=jsonpath='http://{.status.loadBalancer.ingress[0].ip}' | gcloud secrets versions add vertexai_python_url --data-file=-
+    
+    kubectl get service vertexai-summary-service -o=jsonpath='http://{.status.loadBalancer.ingress[0].ip}' | gcloud secrets versions add vertexai-summary --data-file=-
+    
+    kubectl get service pdflb -o=jsonpath='http://{.status.loadBalancer.ingress[0].ip}' | gcloud secrets versions add pdf_loadbalancer --data-file=-
