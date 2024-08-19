@@ -1,0 +1,120 @@
+apiVersion: v1
+entries:
+  etcd:
+  - annotations:
+      category: Database
+      images: |
+        - name: etcd
+          image: docker.io/bitnami/etcd:3.5.13-debian-12-r4
+        - name: os-shell
+          image: docker.io/bitnami/os-shell:12-debian-12-r18
+      licenses: Apache-2.0
+    apiVersion: v2
+    appVersion: 3.5.13
+    created: "2024-08-07T20:13:03.566820311+05:00"
+    dependencies:
+    - name: common
+      repository: oci://registry-1.docker.io/bitnamicharts
+      tags:
+      - bitnami-common
+      version: 2.x.x
+    description: etcd is a distributed key-value store designed to securely store
+      data across a cluster. etcd is widely used in production on account of its reliability,
+      fault-tolerance and ease of use.
+    digest: 7a8dd27dd6f0a85905efaf731bbbf0be9755250d2061109e9a6818aaa38d99aa
+    home: https://bitnami.com
+    icon: https://bitnami.com/assets/stacks/etcd/img/etcd-stack-220x234.png
+    keywords:
+    - etcd
+    - cluster
+    - database
+    - cache
+    - key-value
+    maintainers:
+    - name: VMware, Inc.
+      url: https://github.com/bitnami/charts
+    name: etcd
+    sources:
+    - https://github.com/bitnami/charts/tree/main/bitnami/etcd
+    urls:
+    - https://aretec-inc.github.io/disearch-helm/etcd-10.0.3.tgz
+    version: 10.0.3
+  gke-templates:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2024-08-07T20:13:03.567778642+05:00"
+    description: A Helm chart for Kubernetes
+    digest: 8215b5096233a1547d19c071b6c9ca2b85c992c6061c6e7c35fca28b2b3059d9
+    name: gke-templates
+    type: application
+    urls:
+    - https://aretec-inc.github.io/disearch-helm/gke-templates-0.1.0.tgz
+    version: 0.1.0
+  keda:
+  - apiVersion: v2
+    appVersion: 2.14.0
+    created: "2024-08-07T20:13:03.577339895+05:00"
+    description: Event-based autoscaler for workloads on Kubernetes
+    digest: 7cfafa666cb6cb7bce30525da7271360df29fc02de87215e113d0c7574d39487
+    home: https://github.com/kedacore/keda
+    icon: https://raw.githubusercontent.com/kedacore/keda/main/images/keda-logo-500x500-white.png
+    kubeVersion: '>=v1.23.0-0'
+    maintainers:
+    - email: ahmels@microsoft.com
+      name: Ahmed ElSayed
+    - email: jorge_turrado@hotmail.es
+      name: Jorge Turrado
+    - email: kerkhove.tom@gmail.com
+      name: Tom Kerkhove
+    - email: zbynek@kedify.io
+      name: Zbynek Roubalik
+    name: keda
+    sources:
+    - https://github.com/kedacore/keda
+    urls:
+    - https://aretec-inc.github.io/disearch-helm/keda-2.14.2.tgz
+    version: 2.14.2
+  redis:
+  - annotations:
+      category: Database
+      images: |
+        - name: kubectl
+          image: docker.io/bitnami/kubectl:1.29.2-debian-12-r3
+        - name: os-shell
+          image: docker.io/bitnami/os-shell:12-debian-12-r16
+        - name: redis
+          image: docker.io/bitnami/redis:7.2.4-debian-12-r9
+        - name: redis-exporter
+          image: docker.io/bitnami/redis-exporter:1.58.0-debian-12-r4
+        - name: redis-sentinel
+          image: docker.io/bitnami/redis-sentinel:7.2.4-debian-12-r7
+      licenses: Apache-2.0
+    apiVersion: v2
+    appVersion: 7.2.4
+    created: "2024-08-07T20:13:03.586837829+05:00"
+    dependencies:
+    - name: common
+      repository: oci://registry-1.docker.io/bitnamicharts
+      tags:
+      - bitnami-common
+      version: 2.x.x
+    description: Redis(R) is an open source, advanced key-value store. It is often
+      referred to as a data structure server since keys can contain strings, hashes,
+      lists, sets and sorted sets.
+    digest: 5de9ee0d957b40d4973a10e2aa4452f9f16b8a32d2736ab5cd9f8f62c732dd73
+    home: https://bitnami.com
+    icon: https://bitnami.com/assets/stacks/redis/img/redis-stack-220x234.png
+    keywords:
+    - redis
+    - keyvalue
+    - database
+    maintainers:
+    - name: VMware, Inc.
+      url: https://github.com/bitnami/charts
+    name: redis
+    sources:
+    - https://github.com/bitnami/charts/tree/main/bitnami/redis
+    urls:
+    - https://aretec-inc.github.io/disearch-helm/redis-19.1.0.tgz
+    version: 19.1.0
+generated: "2024-08-07T20:13:03.560610839+05:00"
